@@ -6,6 +6,9 @@ import com.badlogic.gdx.Screen;
 
 public abstract class Base2DScreen implements Screen, InputProcessor {
 
+    protected float width;
+    protected float height;
+
     @Override
     public void show() {
 //        System.out.println("show");
@@ -20,6 +23,8 @@ public abstract class Base2DScreen implements Screen, InputProcessor {
     @Override
     public void resize(int width, int height) {
 //        System.out.println("resize width = " + width + " height = " + height);
+        this.width = width;
+        this.height = height;
     }
 
     @Override

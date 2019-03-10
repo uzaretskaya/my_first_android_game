@@ -15,6 +15,7 @@ public class MenuScreen extends Base2DScreen {
     private Vector2 pos;
     private Vector2 v;
     private Vector2 dest_pos;
+    private Vector2 moonCenter;
 
     @Override
     public void show() {
@@ -26,6 +27,7 @@ public class MenuScreen extends Base2DScreen {
         pos = new Vector2();
         dest_pos = new Vector2();
         v = new Vector2();
+        moonCenter = new Vector2(moon.getWidth() / 2, moon.getHeight() / 2);
     }
 
     @Override
@@ -36,26 +38,36 @@ public class MenuScreen extends Base2DScreen {
         batch.draw(moon, pos.x, pos.y);
         batch.end();
 
-//        System.out.println("delta.x=" + Math.abs(Math.abs(dest_pos.x) - Math.abs(pos.x))
-//                + '\t' + "delta.y=" + Math.abs(Math.abs(dest_pos.y) - Math.abs(pos.y))
-//                + '\t' + "pos.x=" + pos.x + '\t' + "pos.y=" + pos.y
-//                + '\t' + "abs_pos.x=" + pos.x + moon.getWidth() + '\t' + "abs_pos.y=" + pos.y + moon.getHeight()
-//                + '\t' + "dest.x=" + dest_pos.x + '\t' + "dest.y=" + dest_pos.y);
-
-        // 2 - произвольное число, цель проверки, чтобы обе координаты положения были как можно ближе к координатам назначения
-        if (Math.abs(Math.abs(dest_pos.x) - Math.abs(pos.x)) <= 2 && Math.abs(Math.abs(dest_pos.y) - Math.abs(pos.y)) <= 2) {
-            v.setZero();
+        // Считаем, что картинка достигла точки назначения если разность соответствующих координат меньше констант (2 - произвольное число)
+        // Проверим, подошли ли к границам экрана (если еще движемся)
+        if (v.x != 0) {
+            if (v.x < 0){
+                // движемся влево
+                if (Math.abs(pos.x - dest_pos.x) <= 2 || pos.x <= 0) {
+                    v.set(0, v.y);
+                }
+            } else {
+                // движемся вправо
+                if (Math.abs(dest_pos.x - pos.x) <= 2 || pos.x + moon.getWidth() >= width) {
+                    v.set(0, v.y);
+                }
+            }
+        }
+        if (v.y != 0) {
+            if (v.y < 0){
+                // движемся вниз
+                if (Math.abs(pos.y - dest_pos.y) <= 2 || pos.y <= 0){
+                    v.set(v.x, 0);
+                }
+            } else {
+                // движемся вверх
+                if (Math.abs(dest_pos.y - pos.y) <= 2 || pos.y + moon.getHeight() >= height){
+                    v.set(v.x, 0);
+                }
+            }
         }
         pos.add(v);
 
-        // Проверку ниже пока не получилось реализовать, не разобралась, как привялаться именно к границам экрана
-//        // Проверим, подошли ли к границам экрана
-//        if ((v.x != 0 && v.y != 0) && (pos.x + moon.getWidth() >= space.getWidth()
-//        || pos.x <= 0
-//        || pos.y + moon.getHeight() >= space.getHeight()
-//        || pos.y <= 0)){
-//            v.setZero();
-//        }
     }
 
     @Override
@@ -68,17 +80,28 @@ public class MenuScreen extends Base2DScreen {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-//        System.out.println("---------------------------");
-        touch.set(screenX, Gdx.graphics.getHeight() - screenY);
-//        System.out.println("touch.x = " + touch.x + " touch.y = " + touch.y);
-
-        dest_pos.set(touch.x, touch.y);
-        v.set(dest_pos.cpy().sub(pos).cpy().nor()); // через разность вычислим направление и нормализуем вектор
-
-//        System.out.println("v.x = " + v.x + " v.y = " + v.y);
-//        System.out.println("pos.x = " + pos.x + " pos.y = " + pos.y);
-//        System.out.println("dest_pos.x = " + dest_pos.x + " dest_pos.y = " + dest_pos.y);
-
+        touch.set(screenX, Gdx.graphics.getHeight() - screenY); // получим точку клика
+        dest_pos.set(touch.x - moonCenter.x, touch.y - moonCenter.y); // получим координаты назначения с учетом центра картинки
+        calculateV(v, dest_pos);
         return super.touchDown(screenX, screenY, pointer, button);
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        if (keycode == 21){
+            dest_pos.set(0, pos.y); // влево
+        } else if (keycode == 22){
+            dest_pos.set(width, pos.y); // вправо
+        } else if (keycode == 19){
+            dest_pos.set(pos.x, height); // вверх
+        } else if (keycode == 20) {
+            dest_pos.set(pos.x, 0); // вниз
+        }
+        calculateV(v, dest_pos);
+        return super.keyDown(keycode);
+    }
+
+    void calculateV(Vector2 v, Vector2 dest_pos){
+        v.set(dest_pos.cpy().sub(pos).cpy().nor().scl(2)); // рассчитаем скорость и направление движения (умножим на 2 чтобы побыстрее)
     }
 }
