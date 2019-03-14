@@ -5,18 +5,17 @@ import com.badlogic.gdx.math.Vector2;
 
 import ru.uzaretskaia.base.Sprite;
 
-public class BadLogic extends Sprite {
+public class Moon extends Sprite {
 
-    private static float V_LEN = 0.006f;
+    private static float V_LEN = 0.6f;
 
-    private Vector2 pos;
     private Vector2 touch;
     private Vector2 v;
     private Vector2 buf;
 
-    public BadLogic(TextureRegion region) {
+    public Moon(TextureRegion region) {
         super(region);
-        setSize(0.5f, 0.5f);
+        setSize(25f, 25f);
         this.pos = new Vector2();
         touch = new Vector2();
         v = new Vector2();
@@ -37,4 +36,5 @@ public class BadLogic extends Sprite {
         v = touch.cpy().sub(pos).setLength(V_LEN);
         return false;
     }
+
 }

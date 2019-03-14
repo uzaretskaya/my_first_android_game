@@ -1,9 +1,9 @@
-package ru.geekbrains.sprite;
+package ru.uzaretskaia.sprite;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-import ru.geekbrains.base.Sprite;
+import ru.uzaretskaia.base.Sprite;
 
 public class BadLogic extends Sprite {
 

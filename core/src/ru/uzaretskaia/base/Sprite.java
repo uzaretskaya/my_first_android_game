@@ -1,9 +1,9 @@
-package ru.geekbrains.base;
+package ru.uzaretskaia.base;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import ru.geekbrains.math.Rect;
+import ru.uzaretskaia.math.Rect;
 
 public class Sprite extends Rect {
 
